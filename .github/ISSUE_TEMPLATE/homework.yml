@@ -7,6 +7,11 @@ labels:
   - status:queued
   - help:tutor
   - privacy:public-safe
+  - mode:hints-only
+  - plan:required
+  - attempt:required
+  - checks:required
+  - reflection:required
 body:
   - type: input
     id: callsign
@@ -25,11 +30,30 @@ body:
     validations:
       required: true
   - type: textarea
+    id: learning_goal
+    attributes:
+      label: Цель обучения
+      description: Что ученик должен понять или потренировать.
+      placeholder: Понять цикл, условие и возврат значения из функции.
+    validations:
+      required: true
+  - type: textarea
     id: assignment
     attributes:
       label: Задание
       description: Что ученик должен сделать.
       placeholder: Опишите одну конкретную домашку.
+    validations:
+      required: true
+  - type: textarea
+    id: before_code
+    attributes:
+      label: Перед кодом
+      description: Что ученик должен написать до первой строки кода.
+      value: |
+        1. Объяснить задачу своими словами.
+        2. Написать план из 3-5 шагов.
+        3. Придумать 2-3 примера входа и ожидаемого выхода.
     validations:
       required: true
   - type: textarea
@@ -40,6 +64,34 @@ body:
       placeholder: Не добавляйте секреты, личные данные и скрытые ответы.
     validations:
       required: false
+  - type: textarea
+    id: checks
+    attributes:
+      label: Проверка
+      description: Как ученик должен проверить результат.
+      placeholder: Примеры, тесты, ручные проверки, команды запуска.
+    validations:
+      required: true
+  - type: textarea
+    id: reflection
+    attributes:
+      label: Рефлексия
+      description: Что ученик должен объяснить в конце.
+      value: |
+        1. Что получилось?
+        2. Где была главная ошибка или сложность?
+        3. Как я проверил решение?
+        4. Что я смогу сделать сам в следующий раз?
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        Режим помощи по умолчанию: `mode:hints-only`.
+
+        Если нужен другой режим, после создания Issue измените labels вручную:
+        `mode:debug`, `mode:review`, `mode:example` или `mode:reference`.
+        GitHub issue form не умеет менять labels на основе поля формы.
   - type: textarea
     id: expected_result
     attributes:
@@ -54,7 +106,8 @@ body:
       label: Правила для Codex-наставника
       description: Особые ограничения на помощь.
       value: |
-        Codex должен помогать подсказками и объяснениями. Не сдавать полное финальное решение без попытки ученика.
+        Codex должен помогать подсказками и объяснениями.
+        До первой попытки ученика нельзя сдавать полное финальное решение.
+        Перед завершением ученик должен написать короткую рефлексию.
     validations:
       required: true
-
