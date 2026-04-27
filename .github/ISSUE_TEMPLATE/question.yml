@@ -3,7 +3,7 @@ description: Задать вопрос по домашнему заданию.
 title: "[question][ПОЗЫВНОЙ] "
 labels:
   - kind:question
-  - статус:ожидает
+  - статус:ожидает 🕰️
   - privacy:public-safe
 body:
   - type: input

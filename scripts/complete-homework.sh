@@ -53,8 +53,8 @@ gh issue comment "$ISSUE" --body "Готово к проверке учител�
 host: $(hostname 2>/dev/null || echo unknown)
 completed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 gh issue edit "$ISSUE" \
-  --remove-label "статус:ожидает" \
-  --remove-label "статус:в-работе" \
-  --remove-label "статус:заблокировано" \
-  --remove-label "статус:нужны-правки" \
-  --add-label "статус:на-проверке"
+  --remove-label "статус:ожидает 🕰️" \
+  --remove-label "статус:в-работе ⚙️" \
+  --remove-label "статус:заблокировано ⛓️" \
+  --remove-label "статус:нужны-правки 🪡" \
+  --add-label "статус:на-проверке 🔎"
