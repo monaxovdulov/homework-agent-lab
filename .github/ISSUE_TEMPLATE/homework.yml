@@ -4,7 +4,7 @@ title: "[homework][ПОЗЫВНОЙ] "
 labels:
   - role:student
   - kind:homework
-  - status:queued
+  - статус:ожидает
   - help:tutor
   - privacy:public-safe
   - mode:hints-only

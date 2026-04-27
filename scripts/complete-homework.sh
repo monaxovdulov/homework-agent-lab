@@ -6,7 +6,7 @@ usage() {
 Usage:
   scripts/complete-homework.sh ISSUE_NUMBER --summary SUMMARY
 
-Marks homework as ready for teacher review and closes the issue.
+Marks homework as ready for teacher review.
 Use only after the learner says the assignment is ready.
 USAGE
 }
@@ -52,5 +52,9 @@ gh issue comment "$ISSUE" --body "Готово к проверке учител�
 
 host: $(hostname 2>/dev/null || echo unknown)
 completed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-gh issue edit "$ISSUE" --remove-label status:queued --remove-label status:claimed --remove-label status:blocked --add-label status:done
-gh issue close "$ISSUE"
+gh issue edit "$ISSUE" \
+  --remove-label "статус:ожидает" \
+  --remove-label "статус:в-работе" \
+  --remove-label "статус:заблокировано" \
+  --remove-label "статус:нужны-правки" \
+  --add-label "статус:на-проверке"

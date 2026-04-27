@@ -3,7 +3,7 @@ description: Задать вопрос по домашнему заданию.
 title: "[question][ПОЗЫВНОЙ] "
 labels:
   - kind:question
-  - status:queued
+  - статус:ожидает
   - privacy:public-safe
 body:
   - type: input
@@ -28,4 +28,3 @@ body:
       description: Что нужно уточнить?
     validations:
       required: true
-

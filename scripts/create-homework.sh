@@ -159,7 +159,7 @@ gh issue create \
   --body-file "$tmp" \
   --label role:student \
   --label kind:homework \
-  --label status:queued \
+  --label "статус:ожидает" \
   --label help:tutor \
   --label privacy:public-safe \
   --label "mode:$MODE" \
