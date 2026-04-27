@@ -1,0 +1,23 @@
+name: Student question
+description: Ask a question about a homework task.
+title: "[question] "
+labels:
+  - role:teacher
+  - kind:question
+  - status:queued
+body:
+  - type: input
+    id: related_issue
+    attributes:
+      label: Related homework issue
+      placeholder: "#12"
+    validations:
+      required: false
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What needs clarification?
+    validations:
+      required: true
+
