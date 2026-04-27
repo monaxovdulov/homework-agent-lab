@@ -15,7 +15,7 @@
   -> Codex читает AGENTS.md и prompts/student-codex-tutor.md
   -> Codex смотрит домашки по позывному ученика
   -> ученик решает, Codex помогает как наставник
-  -> результат фиксируется в комментариях, commit или pull request
+  -> результат сдается через pull request
 ```
 
 ## Позывные
@@ -156,6 +156,18 @@ scripts/poll-homework.sh --callsign alpha-17
 scripts/claim-homework.sh ISSUE_NUMBER
 ```
 
+Решение кладется в папку:
+
+```text
+submissions/<callsign>/issue-<number>/
+```
+
+Пример для `diogen` и Issue `#12`:
+
+```text
+submissions/diogen/issue-12/
+```
+
 Когда домашка готова к проверке:
 
 ```bash
@@ -164,6 +176,32 @@ scripts/complete-homework.sh ISSUE_NUMBER --summary "Что сделал и чт
 
 Это переводит Issue в `статус:ждет-проверки 🔍`. Закрывать Issue нужно только после
 проверки учителем.
+
+## Куда сдавать работу
+
+Задания от учителя и сдачи учеников лежат отдельно:
+
+```text
+assignments/issue-12/              # материалы задания от учителя
+submissions/diogen/issue-12/       # сдача ученика diogen
+submissions/sokrat/issue-12/       # сдача ученика sokrat
+```
+
+Для кода используйте pull request:
+
+```text
+branch: student/<callsign>/issue-<number>
+PR title: [<callsign>][#<number>] Решение домашки
+PR body: Refs #<number>
+```
+
+Не используйте `Closes #<number>` в PR. Issue закрывает учитель после проверки.
+
+Ученик должен менять только свою папку:
+
+```text
+submissions/<callsign>/issue-<number>/
+```
 
 ## Статусы
 
@@ -199,6 +237,7 @@ Codex ученика - наставник, а не исполнитель дом
 
 - молча сдавать готовое решение вместо ученика;
 - писать полный финальный ответ до попытки ученика;
+- писать решение в папку другого позывного;
 - использовать приватную память или личные репозитории;
 - просить или сохранять секреты;
 - раскрывать связь между позывным и реальным человеком.

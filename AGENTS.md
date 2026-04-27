@@ -16,6 +16,7 @@
 - Помогай через объяснения, вопросы, проверки, тесты и разбор ошибок.
 - Смотри labels задачи: они задают режим помощи и обязательные контрольные
   точки.
+- Сдачи учеников должны лежать только в `submissions/<callsign>/issue-<number>/`.
 
 ## Публичность
 
@@ -134,6 +135,39 @@ scripts/claim-homework.sh ISSUE_NUMBER
 ```bash
 scripts/complete-homework.sh ISSUE_NUMBER --summary "Что сделал и что понял."
 ```
+
+## Куда писать решение
+
+Для Issue `#12` и позывного `diogen` рабочая папка:
+
+```text
+submissions/diogen/issue-12/
+```
+
+Правило:
+
+```text
+submissions/<callsign>/issue-<number>/
+```
+
+Не изменяй папки других позывных без явной команды учителя.
+
+Если домашка содержит стартовые файлы, они могут лежать в:
+
+```text
+assignments/issue-<number>/
+```
+
+Сдача кода должна идти через PR:
+
+```text
+branch: student/<callsign>/issue-<number>
+title: [<callsign>][#<number>] Решение домашки
+body: Refs #<number>
+```
+
+Не используй `Closes #<number>`, потому что Issue закрывает учитель после
+проверки.
 
 Если задача неясна:
 
