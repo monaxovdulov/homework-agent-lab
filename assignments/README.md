@@ -1,13 +1,24 @@
 # Assignments
 
-Store safe starter files here when an assignment needs files in the repository.
+Здесь можно хранить безопасные стартовые файлы для домашних заданий.
 
-Prefer one directory per homework issue:
+Рекомендуемый формат:
 
 ```text
 assignments/issue-12/
 ```
 
-Do not store secrets, private personal data, hidden teacher answers, or unrelated
-project context.
+или, если нужно сгруппировать по позывному:
+
+```text
+assignments/alpha-17/issue-12/
+```
+
+Не храните здесь:
+
+- секреты;
+- личные данные учеников;
+- настоящие имена;
+- скрытые ответы учителя;
+- приватный контекст из других репозиториев.
 

@@ -1,51 +1,60 @@
-name: Homework assignment
-description: Create a homework task for the student Codex tutor workflow.
-title: "[homework] "
+name: Домашнее задание
+description: Создать домашку для ученика и его Codex-наставника.
+title: "[homework][ПОЗЫВНОЙ] "
 labels:
   - role:student
   - kind:homework
   - status:queued
   - help:tutor
+  - privacy:public-safe
 body:
+  - type: input
+    id: callsign
+    attributes:
+      label: Позывной ученика
+      description: Публичный псевдоним ученика. Не пишите настоящее имя.
+      placeholder: alpha-17
+    validations:
+      required: true
   - type: input
     id: topic
     attributes:
-      label: Topic
-      description: Short lesson or homework topic.
-      placeholder: Python functions, SQL joins, async handlers
+      label: Тема
+      description: Короткая тема урока или домашки.
+      placeholder: Функции Python, SQL JOIN, async handlers
     validations:
       required: true
   - type: textarea
     id: assignment
     attributes:
-      label: Assignment
-      description: The task the learner should complete.
-      placeholder: Describe one focused assignment.
+      label: Задание
+      description: Что ученик должен сделать.
+      placeholder: Опишите одну конкретную домашку.
     validations:
       required: true
   - type: textarea
     id: starter_context
     attributes:
-      label: Starter context
-      description: Safe context, starter files, links, or constraints.
-      placeholder: Do not include secrets or private personal data.
+      label: Стартовый контекст
+      description: Безопасный контекст, starter files, ссылки или ограничения.
+      placeholder: Не добавляйте секреты, личные данные и скрытые ответы.
     validations:
       required: false
   - type: textarea
     id: expected_result
     attributes:
-      label: Expected result
-      description: What should be true when the homework is ready for review?
-      placeholder: Tests pass, function behaves as described, explanation written.
+      label: Ожидаемый результат
+      description: Что должно быть верно, когда домашка готова к проверке?
+      placeholder: Тесты проходят, функция работает, ученик написал объяснение.
     validations:
       required: true
   - type: textarea
     id: tutor_rules
     attributes:
-      label: Tutor rules
-      description: Any special coaching constraints.
+      label: Правила для Codex-наставника
+      description: Особые ограничения на помощь.
       value: |
-        The student Codex should coach with hints first and should not submit a complete final solution without learner participation.
+        Codex должен помогать подсказками и объяснениями. Не сдавать полное финальное решение без попытки ученика.
     validations:
       required: true
 

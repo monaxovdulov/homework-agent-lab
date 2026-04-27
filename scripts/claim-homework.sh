@@ -23,5 +23,7 @@ command -v gh >/dev/null 2>&1 || {
 }
 
 gh issue edit "$ISSUE" --remove-label status:queued --add-label status:claimed
-gh issue comment "$ISSUE" --body "Claimed by student Codex tutor on $(hostname 2>/dev/null || echo unknown) at $(date -u +%Y-%m-%dT%H:%M:%SZ)."
+gh issue comment "$ISSUE" --body "Домашка взята в работу Codex-наставником ученика.
 
+host: $(hostname 2>/dev/null || echo unknown)
+claimed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"

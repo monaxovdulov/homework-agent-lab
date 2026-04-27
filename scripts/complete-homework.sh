@@ -46,11 +46,11 @@ command -v gh >/dev/null 2>&1 || {
   exit 1
 }
 
-gh issue comment "$ISSUE" --body "Ready for teacher review.
+gh issue comment "$ISSUE" --body "Готово к проверке учителем.
 
-Summary: $SUMMARY
+Итог: $SUMMARY
 
-Completed by student Codex tutor on $(hostname 2>/dev/null || echo unknown) at $(date -u +%Y-%m-%dT%H:%M:%SZ)."
+host: $(hostname 2>/dev/null || echo unknown)
+completed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 gh issue edit "$ISSUE" --remove-label status:queued --remove-label status:claimed --remove-label status:blocked --add-label status:done
 gh issue close "$ISSUE"
-

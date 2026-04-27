@@ -1,22 +1,49 @@
 # Homework Agent Lab
 
-Experimental private repository for homework coaching with a student Codex agent.
+Публичный экспериментальный репозиторий для домашних заданий, где ученик
+работает со своим Codex как с учебным наставником.
 
-The repository is intentionally separate from private memory repositories such as
-`ai-homebase`. It should contain only assignment text, student attempts, teacher
-feedback, and safe teaching context.
+Репозиторий публичный. Не храните здесь настоящие имена учеников, контакты,
+личные данные, пароли, токены, приватные ключи, закрытые ответы учителя или
+контекст из личных репозиториев.
 
-## Model
+## Модель
 
 ```text
-Teacher creates GitHub Issue
-  -> student Codex checks queued homework
-  -> student Codex claims one issue
-  -> student works with Codex as a tutor
-  -> result is posted as comments, commits, or pull requests
+Учитель создает GitHub Issue с домашкой
+  -> ученик запускает Codex
+  -> Codex читает AGENTS.md и prompts/student-codex-tutor.md
+  -> Codex смотрит домашки по позывному ученика
+  -> ученик решает, Codex помогает как наставник
+  -> результат фиксируется в комментариях, commit или pull request
 ```
 
-GitHub Issues are the mailbox. Labels route and track work:
+## Позывные
+
+У каждого ученика есть личный позывной, например:
+
+```text
+alpha-17
+vector-04
+python-fox
+```
+
+Позывной нужен только для маршрутизации домашек:
+
+```text
+student:alpha-17
+```
+
+Важно: в публичном репозитории позывной не является паролем и не дает приватность.
+Его увидят все, кто откроет Issues. Не храните здесь таблицу соответствий
+`позывной -> реальный ученик`.
+
+Если нужна настоящая приватность между учениками, используйте отдельные private
+репозитории или закрытую LMS-систему.
+
+## Labels
+
+Общие labels:
 
 ```text
 role:student
@@ -29,61 +56,73 @@ status:claimed
 status:blocked
 status:done
 help:tutor
+privacy:public-safe
 ```
 
-## Student Codex Startup
+Для конкретного ученика добавляется label:
+
+```text
+student:<callsign>
+```
+
+Например:
+
+```text
+student:alpha-17
+```
+
+## Создать домашку
+
+Через helper-скрипт:
+
+```bash
+scripts/create-homework.sh \
+  --callsign alpha-17 \
+  --title "Функции в Python" \
+  --body "Напиши функцию, которая принимает список чисел и возвращает сумму четных."
+```
+
+Или через GitHub UI: Issues -> New issue -> Homework assignment.
+
+## Старт ученика
 
 ```bash
 cd /path/to/homework-agent-lab
 git pull --ff-only
-scripts/poll-homework.sh
+scripts/poll-homework.sh --callsign alpha-17
 ```
 
-If the learner decides to work on an issue:
+Если ученик решил работать над задачей:
 
 ```bash
 scripts/claim-homework.sh ISSUE_NUMBER
 ```
 
-When the learner says the assignment is ready for teacher review:
+Когда домашка готова к проверке:
 
 ```bash
-scripts/complete-homework.sh ISSUE_NUMBER --summary "Short summary of what was learned and completed."
+scripts/complete-homework.sh ISSUE_NUMBER --summary "Что сделал и что понял."
 ```
 
-## Teaching Boundary
+## Граница помощи
 
-The student Codex agent is a tutor, not a silent homework solver.
+Codex ученика - наставник, а не исполнитель домашки.
 
-It may:
+Он может:
 
-- explain concepts;
-- ask guiding questions;
-- review student code;
-- write small examples that are not the final answer;
-- generate tests and debugging hints;
-- help the learner break a problem into steps.
+- объяснять тему;
+- задавать наводящие вопросы;
+- проверять код ученика;
+- помогать искать ошибку;
+- писать маленькие похожие примеры;
+- предлагать тесты;
+- помогать оформить итог после попытки ученика.
 
-It must not:
+Он не должен:
 
-- submit a complete final answer without learner participation;
-- hide uncertainty or fabricate results;
-- store secrets, tokens, passwords, private keys, or personal data;
-- pull context from `ai-homebase` or other private memory repositories.
-
-## Creating Homework
-
-Use the GitHub issue template "Homework assignment" or create an issue with:
-
-```bash
-gh issue create \
-  --title "[homework] Topic or task title" \
-  --body "Assignment text..." \
-  --label role:student \
-  --label kind:homework \
-  --label status:queued \
-  --label help:tutor
-```
-
-Keep each issue focused on one assignment.
+- молча сдавать готовое решение вместо ученика;
+- писать полный финальный ответ до попытки ученика;
+- использовать приватную память или личные репозитории;
+- просить или сохранять секреты;
+- раскрывать связь между позывным и реальным человеком.
 

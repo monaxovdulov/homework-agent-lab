@@ -1,23 +1,31 @@
-name: Student question
-description: Ask a question about a homework task.
-title: "[question] "
+name: Вопрос ученика или учителя
+description: Задать вопрос по домашнему заданию.
+title: "[question][ПОЗЫВНОЙ] "
 labels:
-  - role:teacher
   - kind:question
   - status:queued
+  - privacy:public-safe
 body:
+  - type: input
+    id: callsign
+    attributes:
+      label: Позывной ученика
+      description: Публичный псевдоним ученика, если вопрос связан с учеником.
+      placeholder: alpha-17
+    validations:
+      required: false
   - type: input
     id: related_issue
     attributes:
-      label: Related homework issue
+      label: Связанная домашка
       placeholder: "#12"
     validations:
       required: false
   - type: textarea
     id: question
     attributes:
-      label: Question
-      description: What needs clarification?
+      label: Вопрос
+      description: Что нужно уточнить?
     validations:
       required: true
 
