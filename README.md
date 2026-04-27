@@ -7,6 +7,20 @@
 личные данные, пароли, токены, приватные ключи, закрытые ответы учителя или
 контекст из личных репозиториев.
 
+## Быстрый вход
+
+Текущий публичный индекс домашних: [HOMEWORK.md](HOMEWORK.md).
+
+Для первого ученика:
+
+```text
+diogen -> Issue #1: Базовый мини-тест по HTTP
+https://github.com/monaxovdulov/homework-agent-lab/issues/1
+```
+
+Если GitHub Issues или label-фильтры показывают пусто, это не значит, что
+домашек нет. Используйте `HOMEWORK.md` или `scripts/poll-homework.sh`.
+
 ## Модель
 
 ```text
@@ -82,6 +96,15 @@ student:<callsign>
 student:alpha-17
 ```
 
+Также создается простой label без двоеточия:
+
+```text
+alpha-17
+```
+
+Он нужен только как удобный UI-фильтр в GitHub. Основная маршрутизация для
+скриптов остается через `student:<callsign>`.
+
 ## Создать домашку
 
 Через helper-скрипт:
@@ -99,10 +122,14 @@ scripts/create-homework.sh \
 
 Или через GitHub UI: Issues -> New issue -> Homework assignment.
 
+Скрипт также добавляет новую домашку в `HOMEWORK.md`, чтобы ученик мог открыть
+задание по прямой ссылке, даже если GitHub label-фильтры временно пустые.
+
 Если создаете через GitHub UI, после создания добавьте label ученика вручную:
 
 ```text
 student:alpha-17
+alpha-17
 ```
 
 GitHub issue form не умеет сам создавать label из поля "Позывной".
@@ -149,6 +176,10 @@ cd /path/to/homework-agent-lab
 git pull --ff-only
 scripts/poll-homework.sh --callsign alpha-17
 ```
+
+Если GitHub label-фильтр или вкладка Issues показывают пусто, откройте
+`HOMEWORK.md`. Это ручной публичный индекс с прямыми ссылками на актуальные
+домашки.
 
 Если ученик решил работать над задачей:
 

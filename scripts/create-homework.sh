@@ -123,9 +123,72 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
 student_label="student:$CALLSIGN"
+quick_student_label="$CALLSIGN"
+quick_kind_label="homework"
 gh label create "$student_label" \
   --color "ededed" \
   --description "Homework route for callsign $CALLSIGN" >/dev/null 2>&1 || true
+gh label create "$quick_student_label" \
+  --color "ededed" \
+  --description "Quick GitHub UI filter for callsign $CALLSIGN" >/dev/null 2>&1 || true
+gh label create "$quick_kind_label" \
+  --color "5319e7" \
+  --description "Quick GitHub UI filter for homework issues" >/dev/null 2>&1 || true
+
+update_homework_index() {
+  local issue_number="$1"
+  local issue_url="$2"
+  local index_file="HOMEWORK.md"
+  local row="| [#${issue_number}](${issue_url}) | ${TITLE} | ждет ученика | \`submissions/${CALLSIGN}/issue-${issue_number}/\` |"
+
+  if [[ ! -f "$index_file" ]]; then
+    cat > "$index_file" <<'TEXT'
+# Домашки
+
+Публичный индекс домашних заданий по позывным.
+
+Этот файл нужен как устойчивый вход для учеников, потому что GitHub label-фильтры
+могут показывать пустой список до обновления поискового индекса. Источник
+задания все равно находится в GitHub Issue; здесь лежат только прямые ссылки.
+TEXT
+  fi
+
+  if grep -Fq "issues/${issue_number})" "$index_file"; then
+    return
+  fi
+
+  if grep -Fxq "## ${CALLSIGN}" "$index_file"; then
+    local tmp_index
+    tmp_index="$(mktemp)"
+    awk -v section="## ${CALLSIGN}" -v row="$row" '
+      $0 == section { print; in_section = 1; next }
+      in_section && /^## / {
+        print row
+        print ""
+        print
+        in_section = 0
+        inserted = 1
+        next
+      }
+      { print }
+      END {
+        if (in_section && !inserted) {
+          print row
+        }
+      }
+    ' "$index_file" > "$tmp_index"
+    mv "$tmp_index" "$index_file"
+  else
+    cat >> "$index_file" <<TEXT
+
+## ${CALLSIGN}
+
+| Issue | Тема | Статус | Сдача |
+| --- | --- | --- | --- |
+${row}
+TEXT
+  fi
+}
 
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
@@ -154,7 +217,7 @@ trap 'rm -f "$tmp"' EXIT
   printf '%s\n' '- Не добавлять секреты, личные данные или скрытые ответы.'
 } > "$tmp"
 
-gh issue create \
+issue_url="$(gh issue create \
   --title "[homework][$CALLSIGN] $TITLE" \
   --body-file "$tmp" \
   --label role:student \
@@ -167,4 +230,16 @@ gh issue create \
   --label attempt:required \
   --label checks:required \
   --label reflection:required \
-  --label "$student_label"
+  --label "$student_label" \
+  --label "$quick_student_label" \
+  --label "$quick_kind_label")"
+
+printf '%s\n' "$issue_url"
+
+issue_number="${issue_url##*/}"
+if [[ "$issue_number" =~ ^[0-9]+$ ]]; then
+  update_homework_index "$issue_number" "$issue_url"
+  printf 'Updated HOMEWORK.md for %s issue #%s\n' "$CALLSIGN" "$issue_number" >&2
+else
+  printf 'Could not parse issue number from URL: %s\n' "$issue_url" >&2
+fi
