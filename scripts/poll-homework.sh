@@ -6,7 +6,7 @@ usage() {
 Usage:
   scripts/poll-homework.sh [--callsign CALLSIGN] [--json]
 
-Lists homework issues with статус:ожидает 🕰️ for the student tutor workflow.
+Lists homework issues with статус:ждет-ученика 🕯️ for the student tutor workflow.
 USAGE
 }
 
@@ -46,7 +46,7 @@ cd "$ROOT"
 args=(
   --label role:student
   --label kind:homework
-  --label "статус:ожидает 🕰️"
+  --label "статус:ждет-ученика 🕯️"
 )
 
 if [[ -n "$CALLSIGN" ]]; then
@@ -55,7 +55,7 @@ if [[ -n "$CALLSIGN" ]]; then
     if [[ "$JSON" -eq 1 ]]; then
       printf '[]\n'
     else
-      printf 'No homework with статус:ожидает 🕰️ for callsign %s.\n' "$CALLSIGN"
+      printf 'No homework with статус:ждет-ученика 🕯️ for callsign %s.\n' "$CALLSIGN"
     fi
     exit 0
   fi

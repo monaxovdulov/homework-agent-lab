@@ -159,7 +159,7 @@ gh issue create \
   --body-file "$tmp" \
   --label role:student \
   --label kind:homework \
-  --label "статус:ожидает 🕰️" \
+  --label "статус:ждет-ученика 🕯️" \
   --label help:tutor \
   --label privacy:public-safe \
   --label "mode:$MODE" \
