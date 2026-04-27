@@ -21,6 +21,57 @@ https://github.com/monaxovdulov/homework-agent-lab/issues/1
 Если GitHub Issues или label-фильтры показывают пусто, это не значит, что
 домашек нет. Используйте `HOMEWORK.md` или `scripts/poll-homework.sh`.
 
+## Skill для агентов
+
+В репозитории есть Codex skill:
+
+```text
+.agents/skills/homework-agent-lab/
+```
+
+Он нужен, чтобы агент ученика быстро находил домашки по позывному и не зависел
+от GitHub Issues search/filter UI.
+
+Установка на Linux/macOS из корня клона:
+
+```bash
+mkdir -p ~/.codex/skills
+ln -s "$PWD/.agents/skills/homework-agent-lab" ~/.codex/skills/homework-agent-lab
+export HOMEWORK_AGENT_LAB="$PWD"
+```
+
+Если symlink уже существует, удалите его и создайте заново:
+
+```bash
+rm ~/.codex/skills/homework-agent-lab
+ln -s "$PWD/.agents/skills/homework-agent-lab" ~/.codex/skills/homework-agent-lab
+```
+
+Установка на Windows PowerShell из корня клона:
+
+```powershell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills"
+$SkillPath = "$env:USERPROFILE\.codex\skills\homework-agent-lab"
+Remove-Item -Recurse -Force $SkillPath -ErrorAction SilentlyContinue
+Copy-Item -Recurse ".agents\skills\homework-agent-lab" $SkillPath
+[Environment]::SetEnvironmentVariable("HOMEWORK_AGENT_LAB", (Get-Location).Path, "User")
+```
+
+Проверка после установки:
+
+```bash
+~/.codex/skills/homework-agent-lab/scripts/inbox.sh --callsign diogen
+```
+
+Стартовый prompt для ученика может быть коротким:
+
+```text
+Ты Codex-наставник в homework-agent-lab.
+Мой позывной: diogen.
+Используй skill homework-agent-lab.
+Проверь входящие домашки и не бери задачу без моего подтверждения.
+```
+
 ## Модель
 
 ```text

@@ -70,7 +70,9 @@
 1. Синхронизируй репозиторий.
 2. Прочитай `prompts/student-codex-tutor.md`.
 3. Узнай позывной ученика.
-4. Запусти `scripts/poll-homework.sh --callsign ПОЗЫВНОЙ`.
+4. Если установлен skill `homework-agent-lab`, используй его inbox script:
+   `.agents/skills/homework-agent-lab/scripts/inbox.sh --callsign ПОЗЫВНОЙ`.
+   Иначе запусти `scripts/poll-homework.sh --callsign ПОЗЫВНОЙ`.
 5. Если список пустой, открой `HOMEWORK.md` и проверь прямые ссылки для
    позывного.
 6. Покажи короткий список homework со статусом `статус:ждет-ученика 🕯️`.
