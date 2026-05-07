@@ -38,3 +38,49 @@ reflection.md
 
 Issue закрывает учитель после проверки.
 
+## Как сдавать
+
+У ученика должен быть установлен Codex и GitHub CLI (`gh`). На Windows используйте
+PowerShell-команды.
+
+Перед сдачей:
+
+```bash
+scripts/preflight-homework.sh --callsign diogen --issue 12
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/preflight-homework.ps1 -Callsign diogen -Issue 12
+```
+
+Полная сдача через PR:
+
+```bash
+scripts/submit-homework.sh \
+  --callsign diogen \
+  --issue 12 \
+  --summary "Кратко: что сделал, что понял и как проверил."
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/submit-homework.ps1 `
+  -Callsign diogen `
+  -Issue 12 `
+  -Summary "Кратко: что сделал, что понял и как проверил."
+```
+
+Если прикладываете лог, сначала зацензурьте его:
+
+```bash
+scripts/sanitize-log.sh raw.log public.log
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/sanitize-log.ps1 -InputLog raw.log -OutputLog public.log
+```

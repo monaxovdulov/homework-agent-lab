@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/poll-homework.sh [--callsign CALLSIGN] [--json]
+  scripts/poll-homework.sh [--callsign CALLSIGN] [--json] [--repo OWNER/REPO]
 
 Lists homework issues with статус:ждет-ученика 🕯️ for the student tutor workflow.
 USAGE
@@ -13,6 +13,7 @@ USAGE
 JSON=0
 CALLSIGN=""
 STATUS_LABEL="статус:ждет-ученика 🕯️"
+REPO="monaxovdulov/homework-agent-lab"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -23,6 +24,10 @@ while [[ $# -gt 0 ]]; do
     --json)
       JSON=1
       shift
+      ;;
+    --repo)
+      REPO="${2:-}"
+      shift 2
       ;;
     -h|--help)
       usage
@@ -61,8 +66,8 @@ fi
 jq_filter+='))'
 
 if [[ "$JSON" -eq 1 ]]; then
-  gh issue list --limit 100 --json number,title,url,labels,updatedAt --jq "$jq_filter"
+  gh issue list --repo "$REPO" --limit 100 --json number,title,url,labels,updatedAt --jq "$jq_filter"
 else
-  gh issue list --limit 100 --json number,title,url,labels,updatedAt \
+  gh issue list --repo "$REPO" --limit 100 --json number,title,url,labels,updatedAt \
     --jq "$jq_filter | .[] | \"#\\(.number)\t\\(.title)\t\\(.updatedAt)\t\\(.url)\""
 fi

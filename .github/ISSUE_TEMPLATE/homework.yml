@@ -92,6 +92,10 @@ body:
         Если нужен другой режим, после создания Issue измените labels вручную:
         `mode:debug`, `mode:review`, `mode:example` или `mode:reference`.
         GitHub issue form не умеет менять labels на основе поля формы.
+
+        У учеников может быть Windows. Для команд сдачи используйте PowerShell
+        scripts (`scripts/*.ps1`) или попросите Codex-наставника выбрать
+        подходящий вариант.
   - type: textarea
     id: expected_result
     attributes:
@@ -109,5 +113,6 @@ body:
         Codex должен помогать подсказками и объяснениями.
         До первой попытки ученика нельзя сдавать полное финальное решение.
         Перед завершением ученик должен написать короткую рефлексию.
+        Если ученик на Windows, Codex должен использовать PowerShell-команды.
     validations:
       required: true

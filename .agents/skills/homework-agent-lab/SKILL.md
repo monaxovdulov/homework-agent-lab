@@ -17,6 +17,9 @@ identified by public callsigns such as `diogen`.
 ## Core rules
 
 - Work in Russian unless the user asks otherwise.
+- Many students work on Windows. When giving student commands, include the
+  PowerShell `.ps1` variant or use the deterministic scripts that have both
+  Bash and PowerShell forms.
 - Do not use `ai-homebase` or other private repos for student homework.
 - Do not store real student names, contacts, secrets, tokens, or hidden teacher
   answers in the public repo.
@@ -81,3 +84,31 @@ gh issue view ISSUE_NUMBER
 
 Use hints, questions, small similar examples, debugging, and review. Keep the
 student doing the core work.
+
+## Submission
+
+When the student says the homework is ready, use the `submit-homework` skill if
+available. The preferred deterministic commands are:
+
+```bash
+scripts/submit-homework.sh --callsign CALLSIGN --issue ISSUE_NUMBER --summary "..."
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/submit-homework.ps1 -Callsign CALLSIGN -Issue ISSUE_NUMBER -Summary "..."
+```
+
+Do not mark the Issue ready for review until required plan, attempt, checks, and
+reflection checkpoints are present.
+
+Use status scripts instead of manually editing labels:
+
+```bash
+scripts/request-help.sh ISSUE_NUMBER --message "..."
+scripts/return-homework.sh ISSUE_NUMBER --summary "..."
+scripts/accept-homework.sh ISSUE_NUMBER --summary "..."
+```
+
+Windows PowerShell uses the matching `.ps1` files.

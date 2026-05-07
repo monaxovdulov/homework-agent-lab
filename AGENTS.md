@@ -6,11 +6,16 @@
 ## Главные правила
 
 - Используй GitHub CLI (`gh`) для GitHub-действий.
+- У многих учеников Windows: если даешь команды ученику, показывай вариант
+  PowerShell (`powershell -ExecutionPolicy Bypass -File scripts/...ps1`) или
+  используй кроссплатформенный workflow через Codex и `gh`.
 - Считай GitHub Issues почтой домашних заданий.
 - Перед помощью прочитай `prompts/student-codex-tutor.md`.
 - Не загружай и не используй `ai-homebase` для учебных домашних заданий.
 - Не сохраняй пароли, API keys, private keys, session tokens или другие секреты.
 - Не сохраняй настоящие имена, контакты и личные данные учеников.
+- Перед публикацией логов используй `scripts/sanitize-log.sh` или
+  `scripts/sanitize-log.ps1`.
 - Не раскрывай связь между позывным и реальным учеником.
 - Не делай всю домашку молча вместо ученика.
 - Помогай через объяснения, вопросы, проверки, тесты и разбор ошибок.
@@ -132,16 +137,52 @@ scripts/create-homework.sh \
 scripts/poll-homework.sh --callsign alpha-17
 ```
 
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/poll-homework.ps1 -Callsign alpha-17
+```
+
 Взять домашку:
 
 ```bash
 scripts/claim-homework.sh ISSUE_NUMBER
 ```
 
-Отметить готовой к проверке:
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/claim-homework.ps1 -Issue ISSUE_NUMBER
+```
+
+Сдать домашку через PR и перевести Issue на проверку:
 
 ```bash
-scripts/complete-homework.sh ISSUE_NUMBER --summary "Что сделал и что понял."
+scripts/submit-homework.sh \
+  --callsign alpha-17 \
+  --issue ISSUE_NUMBER \
+  --summary "Что сделал, что понял и как проверил."
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/submit-homework.ps1 `
+  -Callsign alpha-17 `
+  -Issue ISSUE_NUMBER `
+  -Summary "Что сделал, что понял и как проверил."
+```
+
+Если PR уже создан вручную, можно только отметить готовой к проверке:
+
+```bash
+scripts/complete-homework.sh ISSUE_NUMBER --summary "Что сделал и что понял. PR: ..."
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/complete-homework.ps1 -Issue ISSUE_NUMBER -Summary "Что сделал и что понял. PR: ..."
 ```
 
 ## Куда писать решение
@@ -177,11 +218,32 @@ body: Refs #<number>
 Не используй `Closes #<number>`, потому что Issue закрывает учитель после
 проверки.
 
+Перед PR обязательно запусти preflight:
+
+```bash
+scripts/preflight-homework.sh --callsign diogen --issue 12
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/preflight-homework.ps1 -Callsign diogen -Issue 12
+```
+
+Для полной сдачи предпочитай `scripts/submit-homework.sh` или
+`scripts/submit-homework.ps1`: они запускают preflight, создают branch/PR и
+переводят Issue в `статус:ждет-проверки 🔍`.
+
 Если задача неясна:
 
 ```bash
-gh issue edit ISSUE_NUMBER --remove-label "статус:ждет-ученика 🕯️" --add-label "статус:нужна-помощь ❓"
-gh issue comment ISSUE_NUMBER --body "Нужна подсказка учителя: ..."
+scripts/request-help.sh ISSUE_NUMBER --message "Нужна подсказка учителя: ..."
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/request-help.ps1 -Issue ISSUE_NUMBER -Message "Нужна подсказка учителя: ..."
 ```
 
 ## Статусы
@@ -196,6 +258,26 @@ gh issue comment ISSUE_NUMBER --body "Нужна подсказка учител
 - `статус:зачтено ✅` - учитель принял работу.
 
 Не закрывай Issue при сдаче учеником. Закрытие делает учитель после проверки.
+
+Для смены статусов используй scripts, а не ручное редактирование labels:
+
+```bash
+scripts/claim-homework.sh ISSUE_NUMBER
+scripts/request-help.sh ISSUE_NUMBER --message "..."
+scripts/submit-homework.sh --callsign alpha-17 --issue ISSUE_NUMBER --summary "..."
+scripts/return-homework.sh ISSUE_NUMBER --summary "..."
+scripts/accept-homework.sh ISSUE_NUMBER --summary "..."
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/claim-homework.ps1 -Issue ISSUE_NUMBER
+powershell -ExecutionPolicy Bypass -File scripts/request-help.ps1 -Issue ISSUE_NUMBER -Message "..."
+powershell -ExecutionPolicy Bypass -File scripts/submit-homework.ps1 -Callsign alpha-17 -Issue ISSUE_NUMBER -Summary "..."
+powershell -ExecutionPolicy Bypass -File scripts/return-homework.ps1 -Issue ISSUE_NUMBER -Summary "..."
+powershell -ExecutionPolicy Bypass -File scripts/accept-homework.ps1 -Issue ISSUE_NUMBER -Summary "..."
+```
 
 ## Стандарт результата
 

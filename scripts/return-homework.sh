@@ -4,10 +4,10 @@ set -euo pipefail
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/complete-homework.sh ISSUE_NUMBER --summary SUMMARY [--repo OWNER/REPO]
+  scripts/return-homework.sh ISSUE_NUMBER --summary SUMMARY [--repo OWNER/REPO]
 
-Marks homework as ready for teacher review.
-Use only after the learner says the assignment is ready.
+Marks a homework issue as статус:нужны-правки 📝.
+Use by teacher or teacher-directed agent after review.
 USAGE
 }
 
@@ -56,14 +56,16 @@ command -v gh >/dev/null 2>&1 || {
   exit 1
 }
 
-gh issue comment "$ISSUE" --repo "$REPO" --body "Готово к проверке учителем.
-
-Итог: $SUMMARY
-
-completed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 gh issue edit "$ISSUE" --repo "$REPO" \
   --remove-label "статус:ждет-ученика 🕯️" \
   --remove-label "статус:ученик-работает ✏️" \
+  --remove-label "статус:ждет-проверки 🔍" \
   --remove-label "статус:нужна-помощь ❓" \
-  --remove-label "статус:нужны-правки 📝" \
-  --add-label "статус:ждет-проверки 🔍"
+  --remove-label "статус:зачтено ✅" \
+  --add-label "статус:нужны-правки 📝"
+
+gh issue comment "$ISSUE" --repo "$REPO" --body "Нужны правки.
+
+Итог проверки: $SUMMARY
+
+reviewed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"

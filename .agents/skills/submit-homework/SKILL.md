@@ -43,71 +43,67 @@ gh issue view ISSUE_NUMBER --repo monaxovdulov/homework-agent-lab
 
 If a required checkpoint is missing, stop and ask the student to add it.
 
-4. Verify the submission directory:
+4. Verify the submission directory.
 
 ```bash
-.agents/skills/submit-homework/scripts/preflight.sh \
-  --callsign CALLSIGN \
-  --issue ISSUE_NUMBER
+scripts/preflight-homework.sh --callsign CALLSIGN --issue ISSUE_NUMBER
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/preflight-homework.ps1 -Callsign CALLSIGN -Issue ISSUE_NUMBER
 ```
 
 If the script reports secrets or wrong folder layout, fix that before PR.
 
-5. Create or switch to the student branch:
+5. Submit through the deterministic script.
 
 ```bash
-git switch -c student/CALLSIGN/issue-ISSUE_NUMBER
+scripts/submit-homework.sh \
+  --callsign CALLSIGN \
+  --issue ISSUE_NUMBER \
+  --summary "What the student did, understood, and checked."
 ```
 
-If the branch already exists, use `git switch student/CALLSIGN/issue-ISSUE_NUMBER`.
+On Windows PowerShell:
 
-6. Stage and commit only relevant public-safe files:
-
-```bash
-git add submissions/CALLSIGN/issue-ISSUE_NUMBER/
-git status --short
-git commit -m "[CALLSIGN][#ISSUE_NUMBER] Submit homework"
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/submit-homework.ps1 `
+  -Callsign CALLSIGN `
+  -Issue ISSUE_NUMBER `
+  -Summary "What the student did, understood, and checked."
 ```
 
-7. Push and open a PR:
+The script creates or reuses `student/CALLSIGN/issue-ISSUE_NUMBER`, commits only
+`submissions/CALLSIGN/issue-ISSUE_NUMBER/`, pushes it, opens or reuses a PR, and
+moves the Issue to `статус:ждет-проверки 🔍`.
 
-```bash
-git push -u origin student/CALLSIGN/issue-ISSUE_NUMBER
-gh pr create \
-  --repo monaxovdulov/homework-agent-lab \
-  --title "[CALLSIGN][#ISSUE_NUMBER] Решение домашки" \
-  --body "$(cat <<'PR_BODY'
-Refs #ISSUE_NUMBER
-
-## Что сделал
-
--
-
-## Как проверил
-
--
-
-## Что понял
-
--
-
-## Где лежит решение
-
-submissions/CALLSIGN/issue-ISSUE_NUMBER/
-
-## Что проверить учителю
-
--
-PR_BODY
-)"
-```
-
-Replace placeholders before running the command. Keep the PR body specific.
-
-8. After the PR exists, comment on the Issue and move it to review:
+6. If a PR was created manually, use completion only after verifying the PR body
+   uses `Refs #ISSUE_NUMBER` and not `Closes #ISSUE_NUMBER`.
 
 ```bash
 scripts/complete-homework.sh ISSUE_NUMBER --summary "Кратко: что сделано, что понял, как проверил, ссылка на PR."
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/complete-homework.ps1 -Issue ISSUE_NUMBER -Summary "Кратко: что сделано, что понял, как проверил, ссылка на PR."
+```
+
+## Log Sanitizing
+
+If the student needs to publish logs, sanitize them first:
+
+```bash
+scripts/sanitize-log.sh raw.log public.log
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/sanitize-log.ps1 -InputLog raw.log -OutputLog public.log
 ```
 
 ## Final Response To Student

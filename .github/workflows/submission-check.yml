@@ -1,0 +1,130 @@
+name: Проверка сдачи
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  validate-submission:
+    name: Validate student submission
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate PR metadata and files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+
+          failures=0
+
+          fail() {
+            echo "::error::$*"
+            failures=$((failures + 1))
+          }
+
+          ok() {
+            echo "OK: $*"
+          }
+
+          if [[ "$PR_TITLE" =~ ^\[([a-zA-Z0-9._-]+)\]\[#([0-9]+)\][[:space:]].+ ]]; then
+            callsign="${BASH_REMATCH[1]}"
+            issue="${BASH_REMATCH[2]}"
+            ok "PR title contains callsign=$callsign issue=$issue"
+          else
+            fail "PR title must be: [<callsign>][#<issue>] Решение домашки"
+            callsign=""
+            issue=""
+          fi
+
+          if [[ -n "$issue" ]]; then
+            if grep -Eiq "(^|[^A-Za-z])Refs[[:space:]]+#${issue}([^0-9]|$)" <<< "$PR_BODY"; then
+              ok "PR body references Issue with Refs #$issue"
+            else
+              fail "PR body must contain: Refs #$issue"
+            fi
+
+            if grep -Eiq "(Closes|Fixes|Resolves)[[:space:]]+#${issue}" <<< "$PR_BODY"; then
+              fail "PR body must not close the Issue. Use Refs #$issue, not Closes/Fixes/Resolves."
+            fi
+          fi
+
+          gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only > /tmp/changed-files.txt
+
+          if [[ ! -s /tmp/changed-files.txt ]]; then
+            fail "PR has no changed files"
+          fi
+
+          if [[ -n "$callsign" && -n "$issue" ]]; then
+            allowed_prefix="submissions/$callsign/issue-$issue/"
+            while IFS= read -r path; do
+              [[ -z "$path" ]] && continue
+
+              if [[ "$path" != "$allowed_prefix"* ]]; then
+                fail "Student PR may change only $allowed_prefix, but changed: $path"
+              fi
+
+              filename="$(basename "$path")"
+              case "$filename" in
+                .env|*.pem|*.key|id_rsa|id_ed25519)
+                  fail "Risky secret-like file must not be committed: $path"
+                  ;;
+              esac
+            done < /tmp/changed-files.txt
+
+            if [[ "$failures" -eq 0 ]]; then
+              scripts/preflight-homework.sh --callsign "$callsign" --issue "$issue" --repo "$REPO"
+            fi
+
+            if [[ -d "$allowed_prefix" ]]; then
+              if [[ ! -f "$allowed_prefix/README.md" && ! -f "$allowed_prefix/reflection.md" ]]; then
+                fail "Submission should include README.md or reflection.md with explanation and checks"
+              fi
+
+              if ! grep -RiqE 'провер|тест|test|pytest|запуск|ожида|expected' "$allowed_prefix"; then
+                fail "Submission should describe checks, tests, launch examples, or expected output"
+              fi
+
+              if ! grep -RiqE 'понял|поняла|слож|ошиб|рефлекс|вывод' "$allowed_prefix"; then
+                fail "Submission should include a short reflection"
+              fi
+            fi
+
+            labels="$(gh issue view "$issue" --repo "$REPO" --json labels --jq '.labels[].name')"
+
+            if grep -Fxq "student:$callsign" <<< "$labels"; then
+              ok "Issue has student:$callsign"
+            else
+              fail "Issue #$issue must have label student:$callsign"
+            fi
+
+            if grep -Fxq "kind:homework" <<< "$labels"; then
+              ok "Issue has kind:homework"
+            else
+              fail "Issue #$issue must have label kind:homework"
+            fi
+          fi
+
+          if [[ "$failures" -ne 0 ]]; then
+            exit 1
+          fi
+
+          ok "submission validation passed"

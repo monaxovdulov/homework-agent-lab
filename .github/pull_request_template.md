@@ -29,4 +29,4 @@ submissions/<callsign>/issue-<number>/
 - [ ] Я не добавил секреты, токены, пароли или личные данные.
 - [ ] Я написал короткую рефлексию.
 - [ ] Я проверил решение или написал, почему не смог проверить.
-
+- [ ] Я запускал preflight: `scripts/preflight-homework.sh` или `scripts/preflight-homework.ps1`.

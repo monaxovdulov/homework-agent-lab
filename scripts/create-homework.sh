@@ -215,6 +215,10 @@ trap 'rm -f "$tmp"' EXIT
   printf '%s\n' '- Перед завершением нужна короткая рефлексия ученика.'
   printf '%s\n' '- Позывной является публичным псевдонимом, не паролем.'
   printf '%s\n' '- Не добавлять секреты, личные данные или скрытые ответы.'
+  # shellcheck disable=SC2016
+  printf '%s\n' '- Если ученик работает на Windows, используйте PowerShell-скрипты `scripts/*.ps1`.'
+  # shellcheck disable=SC2016
+  printf '%s\n' '- Логи перед публикацией нужно зацензурить через `scripts/sanitize-log.sh` или `scripts/sanitize-log.ps1`.'
 } > "$tmp"
 
 issue_url="$(gh issue create \

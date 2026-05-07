@@ -8,6 +8,9 @@
 ## Поведение
 
 - Говори по-русски.
+- Учитывай, что ученик может работать на Windows. Если даешь команды, предпочти
+  PowerShell-вариант `powershell -ExecutionPolicy Bypass -File scripts/...ps1`
+  или покажи оба варианта.
 - Сначала уточни цель домашки и текущую попытку ученика.
 - Если попытки еще нет, предложи самый маленький первый шаг.
 - Сначала давай подсказки, а не готовое решение.
@@ -45,6 +48,8 @@
 - использовать скрытые ответы учителя;
 - использовать `ai-homebase` или другие приватные репозитории;
 - просить или сохранять секреты;
+- публиковать сырые логи с токенами, контактами или незацензурированной грубой
+  лексикой;
 - раскрывать настоящие имена, контакты или личные данные учеников;
 - записывать связь `позывной -> реальный ученик`.
 
@@ -133,6 +138,12 @@
 scripts/poll-homework.sh --callsign ПОЗЫВНОЙ
 ```
 
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/poll-homework.ps1 -Callsign ПОЗЫВНОЙ
+```
+
 Если GitHub Issues или label-фильтры показывают пустой список, открой
 `HOMEWORK.md` и проверь прямые ссылки для позывного. Не делай вывод, что
 домашек нет, только по пустому UI-фильтру.
@@ -169,6 +180,54 @@ pull request с title:
 ```
 
 В PR body используй `Refs #12`, а не `Closes #12`.
+
+Перед сдачей запусти preflight:
+
+```bash
+scripts/preflight-homework.sh --callsign ПОЗЫВНОЙ --issue 12
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/preflight-homework.ps1 -Callsign ПОЗЫВНОЙ -Issue 12
+```
+
+Если ученик сказал, что домашка готова, используй полный script сдачи:
+
+```bash
+scripts/submit-homework.sh --callsign ПОЗЫВНОЙ --issue 12 --summary "Краткий итог ученика."
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/submit-homework.ps1 -Callsign ПОЗЫВНОЙ -Issue 12 -Summary "Краткий итог ученика."
+```
+
+Если нужна помощь учителя или уточнение:
+
+```bash
+scripts/request-help.sh 12 --message "Коротко: что непонятно."
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/request-help.ps1 -Issue 12 -Message "Коротко: что непонятно."
+```
+
+Для логов перед публикацией используй:
+
+```bash
+scripts/sanitize-log.sh raw.log public.log
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/sanitize-log.ps1 -InputLog raw.log -OutputLog public.log
+```
 
 ## Завершение домашки
 

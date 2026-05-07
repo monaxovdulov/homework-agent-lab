@@ -4,10 +4,10 @@ set -euo pipefail
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/complete-homework.sh ISSUE_NUMBER --summary SUMMARY [--repo OWNER/REPO]
+  scripts/request-help.sh ISSUE_NUMBER --message MESSAGE [--repo OWNER/REPO]
 
-Marks homework as ready for teacher review.
-Use only after the learner says the assignment is ready.
+Marks a homework issue as статус:нужна-помощь ❓ and leaves a public-safe
+question for the teacher.
 USAGE
 }
 
@@ -21,13 +21,13 @@ if [[ -n "$ISSUE" ]]; then
   shift
 fi
 
-SUMMARY=""
+MESSAGE=""
 REPO="monaxovdulov/homework-agent-lab"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --summary)
-      SUMMARY="${2:-}"
+    --message)
+      MESSAGE="${2:-}"
       shift 2
       ;;
     --repo)
@@ -46,7 +46,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$ISSUE" || -z "$SUMMARY" ]]; then
+if [[ -z "$ISSUE" || -z "$MESSAGE" ]]; then
   usage >&2
   exit 1
 fi
@@ -56,14 +56,13 @@ command -v gh >/dev/null 2>&1 || {
   exit 1
 }
 
-gh issue comment "$ISSUE" --repo "$REPO" --body "Готово к проверке учителем.
-
-Итог: $SUMMARY
-
-completed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 gh issue edit "$ISSUE" --repo "$REPO" \
   --remove-label "статус:ждет-ученика 🕯️" \
   --remove-label "статус:ученик-работает ✏️" \
-  --remove-label "статус:нужна-помощь ❓" \
+  --remove-label "статус:ждет-проверки 🔍" \
   --remove-label "статус:нужны-правки 📝" \
-  --add-label "статус:ждет-проверки 🔍"
+  --add-label "статус:нужна-помощь ❓"
+
+gh issue comment "$ISSUE" --repo "$REPO" --body "Нужна подсказка учителя: $MESSAGE
+
+requested_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
