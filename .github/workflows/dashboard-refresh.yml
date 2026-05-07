@@ -1,0 +1,55 @@
+name: Обновить дашборд
+
+on:
+  workflow_dispatch:
+  issues:
+    types:
+      - opened
+      - edited
+      - labeled
+      - unlabeled
+      - closed
+      - reopened
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - closed
+      - reopened
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  refresh:
+    name: Refresh HOMEWORK and DASHBOARD
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate dashboard files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          scripts/update-homework-index.sh --repo "$GITHUB_REPOSITORY"
+          scripts/update-dashboard.sh --repo "$GITHUB_REPOSITORY"
+
+      - name: Commit dashboard updates
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- HOMEWORK.md DASHBOARD.md; then
+            echo "No dashboard changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add HOMEWORK.md DASHBOARD.md
+          git commit -m "Update homework dashboard"
+          git push

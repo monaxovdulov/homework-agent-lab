@@ -63,6 +63,24 @@ Then open the direct issue link and inspect labels:
 gh issue view ISSUE_NUMBER
 ```
 
+For a teacher/operator overview, use:
+
+```text
+DASHBOARD.md
+```
+
+Optional GitHub Projects v2 sync:
+
+```bash
+scripts/sync-github-project.sh --repo monaxovdulov/homework-agent-lab --owner monaxovdulov --title "Homework Dashboard"
+```
+
+If Projects access fails, refresh `gh` scopes:
+
+```bash
+gh auth refresh -s read:project -s project
+```
+
 ## Startup workflow
 
 1. Determine the student's callsign.

@@ -23,6 +23,7 @@
   точки.
 - Если GitHub Issues или label-фильтры показывают пусто, проверь `HOMEWORK.md`
   и только потом делай вывод, что домашних нет.
+- Для общей картины смотри `DASHBOARD.md` и GitHub Project `Homework Dashboard`.
 - Сдачи учеников должны лежать только в `submissions/<callsign>/issue-<number>/`.
 
 ## Публичность
@@ -183,6 +184,35 @@ scripts/complete-homework.sh ISSUE_NUMBER --summary "Что сделал и чт
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/complete-homework.ps1 -Issue ISSUE_NUMBER -Summary "Что сделал и что понял. PR: ..."
+```
+
+Обновить визуальный дашборд:
+
+```bash
+scripts/update-homework-index.sh
+scripts/update-dashboard.sh
+```
+
+На Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/update-homework-index.ps1
+powershell -ExecutionPolicy Bypass -File scripts/update-dashboard.ps1
+```
+
+Синхронизировать GitHub Project `Homework Dashboard`:
+
+```bash
+scripts/sync-github-project.sh \
+  --repo monaxovdulov/homework-agent-lab \
+  --owner monaxovdulov \
+  --title "Homework Dashboard"
+```
+
+Если не хватает доступа к GitHub Projects:
+
+```bash
+gh auth refresh -s read:project -s project
 ```
 
 ## Куда писать решение
