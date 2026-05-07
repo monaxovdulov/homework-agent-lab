@@ -18,6 +18,8 @@ secrets, or the mapping between callsign and a real person.
 
 - Work only in `submissions/<callsign>/issue-<number>/`.
 - Do not edit another callsign's folder.
+- Require `submissions/<callsign>/issue-<number>/submission.md` for every
+  storage mode.
 - Do not include API keys, passwords, private keys, session tokens, or real
   personal data.
 - Use `Refs #<number>` in PR text. Never use `Closes #<number>`.
@@ -40,8 +42,17 @@ gh issue view ISSUE_NUMBER --repo monaxovdulov/homework-agent-lab
 - `checks:required`: tests, commands, or manual scenarios are included.
 - `reflection:required`: the student wrote what they understood and how they
   checked the result.
+- `storage:*`: determines where code lives. Supported values are
+  `storage:lab-public`, `storage:student-public-repo`,
+  `storage:student-private-repo`, `storage:external-link`, and
+  `storage:no-code`.
 
 If a required checkpoint is missing, stop and ask the student to add it.
+
+The manifest must include `Issue`, `Callsign`, `Storage`, `Checks`, and
+`Reflection`. For `storage:student-public-repo` or `storage:external-link`, it
+must include a public-safe `Submission URL`. For `storage:student-private-repo`,
+it must describe teacher `Access` without exposing secrets or personal data.
 
 4. Verify the submission directory.
 

@@ -51,7 +51,8 @@ rows="$(gh issue list \
     | select($labels | index("kind:homework"))
     | ($labels | map(select(startswith("student:"))) | .[0] // "student:unknown" | sub("^student:"; "")) as $callsign
     | ($labels | map(select(startswith("статус:"))) | .[0] // "статус:неизвестно" | sub("^статус:"; "")) as $status
-    | [$callsign, (.number | tostring), .url, .title, $status, ("submissions/" + $callsign + "/issue-" + (.number | tostring) + "/")]
+    | ($labels | map(select(startswith("storage:"))) | .[0] // "storage:lab-public" | sub("^storage:"; "")) as $storage
+    | [$callsign, (.number | tostring), .url, .title, $status, $storage, ("submissions/" + $callsign + "/issue-" + (.number | tostring) + "/")]
     | @tsv
   ' | sort -t $'\t' -k1,1 -k2,2n)"
 
@@ -99,9 +100,11 @@ else
       url = $3
       title = $4
       status = $5
-      path = $6
+      storage = $6
+      path = $7
       gsub(/\|/, "\\|", title)
       gsub(/\|/, "\\|", status)
+      gsub(/\|/, "\\|", storage)
       if (callsign != current) {
         if (current != "") {
           print ""
@@ -109,11 +112,11 @@ else
         print ""
         print "## " callsign
         print ""
-        print "| Issue | Тема | Статус | Сдача |"
-        print "| --- | --- | --- | --- |"
+        print "| Issue | Тема | Статус | Storage | Сдача |"
+        print "| --- | --- | --- | --- | --- |"
         current = callsign
       }
-      printf "| [#%s](%s) | %s | %s | `%s` |\n", issue, url, title, status, path
+      printf "| [#%s](%s) | %s | %s | `storage:%s` | `%s` |\n", issue, url, title, status, storage, path
     }
   ' <<< "$rows" >> "$tmp"
 fi

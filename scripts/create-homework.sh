@@ -12,6 +12,8 @@ Options:
   --checks TEXT      How the student should verify the result.
   --reflection TEXT  What the student should explain at the end.
   --mode MODE        hints-only|debug|review|example|reference. Default: hints-only
+  --storage STORAGE  lab-public|student-public-repo|student-private-repo|external-link|no-code.
+                     Default: lab-public
 
 Creates a public-safe homework issue for one student callsign.
 CALLSIGN is a public pseudonym, not an authentication secret.
@@ -26,6 +28,7 @@ PRE_CODE=""
 CHECKS=""
 REFLECTION=""
 MODE="hints-only"
+STORAGE="lab-public"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -61,6 +64,10 @@ while [[ $# -gt 0 ]]; do
       MODE="${2:-}"
       shift 2
       ;;
+    --storage)
+      STORAGE="${2:-}"
+      shift 2
+      ;;
     -h|--help)
       usage
       exit 0
@@ -89,6 +96,14 @@ case "$MODE" in
   hints-only|debug|review|example|reference) ;;
   *)
     echo "--mode must be one of: hints-only, debug, review, example, reference" >&2
+    exit 1
+    ;;
+esac
+
+case "$STORAGE" in
+  lab-public|student-public-repo|student-private-repo|external-link|no-code) ;;
+  *)
+    echo "--storage must be one of: lab-public, student-public-repo, student-private-repo, external-link, no-code" >&2
     exit 1
     ;;
 esac
@@ -123,6 +138,7 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
 student_label="student:$CALLSIGN"
+storage_label="storage:$STORAGE"
 quick_student_label="$CALLSIGN"
 quick_kind_label="homework"
 gh label create "$student_label" \
@@ -135,11 +151,27 @@ gh label create "$quick_kind_label" \
   --color "5319e7" \
   --description "Quick GitHub UI filter for homework issues" >/dev/null 2>&1 || true
 
+gh label create "storage:lab-public" \
+  --color "c2e0c6" \
+  --description "Submission code is stored in this public homework lab" >/dev/null 2>&1 || true
+gh label create "storage:student-public-repo" \
+  --color "bfd4f2" \
+  --description "Submission code is stored in a public student repository" >/dev/null 2>&1 || true
+gh label create "storage:student-private-repo" \
+  --color "fef2c0" \
+  --description "Submission code is stored in a private student repository shared with teacher" >/dev/null 2>&1 || true
+gh label create "storage:external-link" \
+  --color "d4c5f9" \
+  --description "Submission is stored through an external public-safe link" >/dev/null 2>&1 || true
+gh label create "storage:no-code" \
+  --color "ededed" \
+  --description "Submission has no code artifact" >/dev/null 2>&1 || true
+
 update_homework_index() {
   local issue_number="$1"
   local issue_url="$2"
   local index_file="HOMEWORK.md"
-  local row="| [#${issue_number}](${issue_url}) | ${TITLE} | ждет ученика | \`submissions/${CALLSIGN}/issue-${issue_number}/\` |"
+  local row="| [#${issue_number}](${issue_url}) | ${TITLE} | ждет ученика | \`storage:${STORAGE}\` | \`submissions/${CALLSIGN}/issue-${issue_number}/\` |"
 
   if [[ ! -f "$index_file" ]]; then
     cat > "$index_file" <<'TEXT'
@@ -183,8 +215,8 @@ TEXT
 
 ## ${CALLSIGN}
 
-| Issue | Тема | Статус | Сдача |
-| --- | --- | --- | --- |
+| Issue | Тема | Статус | Storage | Сдача |
+| --- | --- | --- | --- | --- |
 ${row}
 TEXT
   fi
@@ -198,6 +230,8 @@ trap 'rm -f "$tmp"' EXIT
   printf 'visibility: public\n'
   printf 'callsign: %s\n' "$CALLSIGN"
   printf 'tutor_mode: %s\n' "$MODE"
+  printf 'storage_mode: %s\n' "$STORAGE"
+  printf 'submission_manifest: submissions/%s/issue-ISSUE_NUMBER/submission.md\n' "$CALLSIGN"
   printf 'requires_plan: true\n'
   printf 'requires_attempt: true\n'
   printf 'requires_checks: true\n'
@@ -208,6 +242,16 @@ trap 'rm -f "$tmp"' EXIT
   printf '## Перед кодом\n\n%s\n\n' "$PRE_CODE"
   printf '## Проверка\n\n%s\n\n' "$CHECKS"
   printf '## Рефлексия\n\n%s\n\n' "$REFLECTION"
+  printf '## Сдача\n\n'
+  # shellcheck disable=SC2016
+  printf 'Storage mode: `storage:%s`.\n\n' "$STORAGE"
+  # shellcheck disable=SC2016
+  printf 'В `homework-agent-lab` всегда должен быть публичный manifest:\n\n'
+  # shellcheck disable=SC2016
+  printf '```text\nsubmissions/%s/issue-<номер-issue>/submission.md\n```\n\n' "$CALLSIGN"
+  # shellcheck disable=SC2016
+  printf 'Если storage mode `storage:lab-public`, код можно положить рядом с manifest в эту же папку.\n'
+  printf 'Если код лежит во внешнем или приватном репозитории, в manifest указывай только публично безопасную информацию.\n\n'
   printf '## Правила\n\n'
   printf '%s\n' "- Codex работает в режиме mode:$MODE."
   printf '%s\n' '- Codex помогает как наставник, а не сдает домашку вместо ученика.'
@@ -230,6 +274,7 @@ issue_url="$(gh issue create \
   --label help:tutor \
   --label privacy:public-safe \
   --label "mode:$MODE" \
+  --label "$storage_label" \
   --label plan:required \
   --label attempt:required \
   --label checks:required \

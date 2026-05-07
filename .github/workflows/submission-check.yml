@@ -95,16 +95,17 @@ jobs:
             fi
 
             if [[ -d "$allowed_prefix" ]]; then
-              if [[ ! -f "$allowed_prefix/README.md" && ! -f "$allowed_prefix/reflection.md" ]]; then
-                fail "Submission should include README.md or reflection.md with explanation and checks"
+              manifest="$allowed_prefix/submission.md"
+              if [[ ! -f "$manifest" ]]; then
+                fail "Submission must include manifest: $manifest"
               fi
 
-              if ! grep -RiqE 'провер|тест|test|pytest|запуск|ожида|expected' "$allowed_prefix"; then
-                fail "Submission should describe checks, tests, launch examples, or expected output"
+              if [[ -f "$manifest" ]] && ! grep -iqE '^(Checks|Проверки|Проверка):|^##[[:space:]]*(Checks|Проверки|Проверка)' "$manifest"; then
+                fail "Submission manifest should describe checks, tests, launch examples, or expected output"
               fi
 
-              if ! grep -RiqE 'понял|поняла|слож|ошиб|рефлекс|вывод' "$allowed_prefix"; then
-                fail "Submission should include a short reflection"
+              if [[ -f "$manifest" ]] && ! grep -iqE '^(Reflection|Рефлексия):|^##[[:space:]]*(Reflection|Рефлексия)' "$manifest"; then
+                fail "Submission manifest should include a short reflection"
               fi
             fi
 

@@ -175,6 +175,24 @@ assignments/issue-12/
 Не меняй папки других позывных. Если нужна сдача кода, помоги ученику открыть
 pull request с title:
 
+В любой сдаче обязательно создай manifest:
+
+```text
+submissions/<callsign>/issue-12/submission.md
+```
+
+Storage mode задается label `storage:*` на Issue:
+
+- `storage:lab-public`: код лежит рядом с `submission.md`;
+- `storage:student-public-repo`: здесь только manifest, код в публичном repo ученика;
+- `storage:student-private-repo`: здесь только manifest, код в приватном repo с доступом учителя;
+- `storage:external-link`: здесь manifest со ссылкой на внешнюю систему;
+- `storage:no-code`: здесь answer/reflection без кода.
+
+Manifest должен содержать `Issue`, `Callsign`, `Storage`, `Checks` и
+`Reflection`. Для публичного внешнего repo или ссылки добавь `Submission URL`.
+Для приватного repo добавь только безопасное описание `Access`, без секретов.
+
 ```text
 [<callsign>][#12] Решение домашки
 ```

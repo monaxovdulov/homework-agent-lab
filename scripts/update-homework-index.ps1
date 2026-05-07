@@ -38,12 +38,20 @@ $Rows = @(
             $Status = $StatusLabel[0] -replace '^статус:', ''
         }
 
+        $StorageLabel = @($Labels | Where-Object { $_ -like "storage:*" } | Select-Object -First 1)
+        if ($StorageLabel.Count -eq 0) {
+            $Storage = "lab-public"
+        } else {
+            $Storage = $StorageLabel[0] -replace '^storage:', ''
+        }
+
         [PSCustomObject]@{
             Callsign = $Callsign
             Issue = [int]$Issue.number
             Url = $Issue.url
             Title = $Issue.title
             Status = $Status
+            Storage = $Storage
             Path = "submissions/$Callsign/issue-$($Issue.number)/"
         }
     }
@@ -86,13 +94,14 @@ if ($Rows.Count -eq 0) {
             $Lines.Add("")
             $Lines.Add("## $Current")
             $Lines.Add("")
-            $Lines.Add("| Issue | Тема | Статус | Сдача |")
-            $Lines.Add("| --- | --- | --- | --- |")
+            $Lines.Add("| Issue | Тема | Статус | Storage | Сдача |")
+            $Lines.Add("| --- | --- | --- | --- | --- |")
         }
 
         $Title = $Row.Title -replace '\|', '\|'
         $Status = $Row.Status -replace '\|', '\|'
-        $Lines.Add("| [#$($Row.Issue)]($($Row.Url)) | $Title | $Status | ``$($Row.Path)`` |")
+        $Storage = $Row.Storage -replace '\|', '\|'
+        $Lines.Add("| [#$($Row.Issue)]($($Row.Url)) | $Title | $Status | ``storage:$Storage`` | ``$($Row.Path)`` |")
     }
 }
 

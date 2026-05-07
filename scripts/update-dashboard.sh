@@ -132,6 +132,7 @@ for issue in homework:
     callsign = label_value(issue, "student:", "unknown")
     status = label_value(issue, "статус:", "неизвестно")
     mode = label_value(issue, "mode:", "hints-only")
+    storage = label_value(issue, "storage:", "lab-public")
     issue_prs = prs_by_issue.get(issue_number, [])
     pr_links = ", ".join(f"[#{pr['number']}]({pr['url']}) {pr['state'].lower()}" for pr in issue_prs) or "-"
     checkpoint_labels = [name for name in labels(issue) if name.endswith(":required")]
@@ -144,6 +145,7 @@ for issue in homework:
         "state": issue.get("state", ""),
         "status": status,
         "mode": mode,
+        "storage": storage,
         "updated": short_date(issue.get("updatedAt")),
         "created": short_date(issue.get("createdAt")),
         "submission": submission_path(callsign, issue_number),
@@ -164,6 +166,7 @@ status_order = [
 ]
 
 status_counts = Counter(row["status"] for row in records)
+storage_counts = Counter(row["storage"] for row in records)
 student_rows = defaultdict(list)
 for row in records:
     student_rows[row["callsign"]].append(row)
@@ -192,6 +195,9 @@ lines.append(f"| Открытых PR | {len(open_prs)} |")
 for status in status_order:
     if status_counts[status]:
         lines.append(f"| {md(status)} | {status_counts[status]} |")
+for storage, count in sorted(storage_counts.items()):
+    if count:
+        lines.append(f"| storage:{md(storage)} | {count} |")
 lines.append("")
 
 lines.append("## Ученики")
@@ -222,11 +228,11 @@ for status in status_order:
     lines.append("")
     lines.append(f"### {status}")
     lines.append("")
-    lines.append("| Позывной | Issue | Задание | PR | Обновлено | Сдача |")
-    lines.append("| --- | --- | --- | --- | --- | --- |")
+    lines.append("| Позывной | Issue | Задание | Storage | PR | Обновлено | Сдача |")
+    lines.append("| --- | --- | --- | --- | --- | --- | --- |")
     for row in sorted(status_rows, key=lambda item: (item["updated"], item["callsign"], item["issue"]), reverse=True):
         lines.append(
-            f"| `{md(row['callsign'])}` | {row['issue_link']} | {md(row['title'])} | "
+            f"| `{md(row['callsign'])}` | {row['issue_link']} | {md(row['title'])} | `storage:{md(row['storage'])}` | "
             f"{row['pr_links']} | {row['updated']} | `{md(row['submission'])}` |"
         )
 lines.append("")
@@ -235,11 +241,11 @@ review_rows = [row for row in records if row["status"] == "ждет-провер
 lines.append("## Очередь Проверки")
 lines.append("")
 if review_rows:
-    lines.append("| Позывной | Issue | PR | Обновлено | Что открыть |")
-    lines.append("| --- | --- | --- | --- | --- |")
+    lines.append("| Позывной | Issue | Storage | PR | Обновлено | Что открыть |")
+    lines.append("| --- | --- | --- | --- | --- | --- |")
     for row in sorted(review_rows, key=lambda item: item["updated"]):
         lines.append(
-            f"| `{md(row['callsign'])}` | {row['issue_link']} | {row['pr_links']} | "
+            f"| `{md(row['callsign'])}` | {row['issue_link']} | `storage:{md(row['storage'])}` | {row['pr_links']} | "
             f"{row['updated']} | `{md(row['submission'])}` |"
         )
 else:

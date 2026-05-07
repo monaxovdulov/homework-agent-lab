@@ -14,6 +14,7 @@ USAGE
 CALLSIGN=""
 ISSUE=""
 REPO="monaxovdulov/homework-agent-lab"
+STORAGE="lab-public"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -69,6 +70,7 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
 DIR="submissions/$CALLSIGN/issue-$ISSUE"
+MANIFEST="$DIR/submission.md"
 FAILED=0
 
 fail() {
@@ -99,7 +101,7 @@ if [[ -d "$DIR" ]]; then
   fi
 
   if [[ ! -f "$DIR/README.md" && ! -f "$DIR/reflection.md" ]]; then
-    warn "no README.md or reflection.md found; teacher review may ask for explanation"
+    ok "README.md/reflection.md not found; submission.md is the required manifest"
   else
     ok "README.md or reflection.md found"
   fi
@@ -121,10 +123,96 @@ if command -v gh >/dev/null 2>&1; then
     else
       ok "Issue has label kind:homework"
     fi
+
+    storage_labels="$(grep -E '^storage:' "$labels_file" || true)"
+    storage_count="$(printf '%s\n' "$storage_labels" | sed '/^$/d' | wc -l | tr -d ' ')"
+    if [[ "$storage_count" == "0" ]]; then
+      warn "Issue has no storage:* label; assuming storage:lab-public"
+    elif [[ "$storage_count" != "1" ]]; then
+      fail "Issue must have exactly one storage:* label"
+      printf '%s\n' "$storage_labels" >&2
+    else
+      STORAGE="${storage_labels#storage:}"
+    fi
   fi
   rm -f "$labels_file"
 else
   warn "gh is not installed; skipped Issue label checks"
+fi
+
+case "$STORAGE" in
+  lab-public|student-public-repo|student-private-repo|external-link|no-code)
+    ok "storage mode: storage:$STORAGE"
+    ;;
+  *)
+    fail "unknown storage mode: storage:$STORAGE"
+    ;;
+esac
+
+if [[ -d "$DIR" ]]; then
+  if [[ ! -f "$MANIFEST" ]]; then
+    fail "missing required manifest: $MANIFEST"
+  else
+    ok "submission manifest found: $MANIFEST"
+
+    if ! grep -Eiq "^Issue:[[:space:]]*#?${ISSUE}([[:space:]]|$)" "$MANIFEST"; then
+      fail "manifest must contain: Issue: #$ISSUE"
+    else
+      ok "manifest references Issue #$ISSUE"
+    fi
+
+    if ! grep -Eiq "^Callsign:[[:space:]]*${CALLSIGN}([[:space:]]|$)" "$MANIFEST"; then
+      fail "manifest must contain: Callsign: $CALLSIGN"
+    else
+      ok "manifest references callsign $CALLSIGN"
+    fi
+
+    if ! grep -Eiq "^Storage:[[:space:]]*(storage:)?${STORAGE}([[:space:]]|$)" "$MANIFEST"; then
+      fail "manifest must contain: Storage: $STORAGE"
+    else
+      ok "manifest storage matches storage:$STORAGE"
+    fi
+
+    if ! grep -Eiq '^(Checks|Проверки|Проверка):|^##[[:space:]]*(Checks|Проверки|Проверка)' "$MANIFEST"; then
+      fail "manifest must describe checks"
+    else
+      ok "manifest describes checks"
+    fi
+
+    if ! grep -Eiq '^(Reflection|Рефлексия):|^##[[:space:]]*(Reflection|Рефлексия)' "$MANIFEST"; then
+      fail "manifest must include reflection"
+    else
+      ok "manifest includes reflection"
+    fi
+
+    case "$STORAGE" in
+      student-public-repo|external-link)
+        if ! grep -Eiq '^(Submission URL|URL|Repo|PR|Link|Ссылка):[[:space:]]*https?://' "$MANIFEST"; then
+          fail "manifest for storage:$STORAGE must include a public-safe Submission URL/Repo/PR/Link"
+        else
+          ok "manifest includes public-safe external URL"
+        fi
+        ;;
+      student-private-repo)
+        if ! grep -Eiq '^(Access|Доступ):' "$MANIFEST"; then
+          fail "manifest for storage:student-private-repo must describe teacher access without exposing secrets"
+        else
+          ok "manifest describes private repo access"
+        fi
+        ;;
+      lab-public)
+        non_manifest_count="$(find "$DIR" -type f ! -name 'submission.md' | wc -l | tr -d ' ')"
+        if [[ "$non_manifest_count" == "0" ]]; then
+          warn "storage:lab-public usually includes code or answer files next to submission.md"
+        fi
+        ;;
+      no-code)
+        if [[ ! -f "$DIR/answer.md" ]] && ! grep -Eiq '^(Answer|Ответ):|^##[[:space:]]*(Answer|Ответ)' "$MANIFEST"; then
+          warn "storage:no-code usually includes answer.md or an Answer section in submission.md"
+        fi
+        ;;
+    esac
+  fi
 fi
 
 if [[ -d "$DIR" ]]; then

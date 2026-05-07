@@ -87,6 +87,7 @@ $Records = @(
         $Callsign = Get-LabelValue $Issue "student:" "unknown"
         $Status = Get-LabelValue $Issue "статус:" "неизвестно"
         $Mode = Get-LabelValue $Issue "mode:" "hints-only"
+        $Storage = Get-LabelValue $Issue "storage:" "lab-public"
         $IssuePrs = if ($PrsByIssue.ContainsKey($IssueNumber)) { @($PrsByIssue[$IssueNumber]) } else { @() }
         $PrLinks = if ($IssuePrs.Count -gt 0) {
             (($IssuePrs | ForEach-Object { "[#$($_.number)]($($_.url)) $($_.state.ToLower())" }) -join ", ")
@@ -102,6 +103,7 @@ $Records = @(
             State = $Issue.state
             Status = $Status
             Mode = $Mode
+            Storage = $Storage
             Updated = ShortDate $Issue.updatedAt
             Created = ShortDate $Issue.createdAt
             Submission = "submissions/$Callsign/issue-$IssueNumber/"
@@ -146,6 +148,12 @@ foreach ($Status in $StatusOrder) {
         $Lines.Add("| $(Md $Status) | $Count |")
     }
 }
+foreach ($Storage in @($Records | Select-Object -ExpandProperty Storage -Unique | Sort-Object)) {
+    $Count = @($Records | Where-Object { $_.Storage -eq $Storage }).Count
+    if ($Count -gt 0) {
+        $Lines.Add("| storage:$(Md $Storage) | $Count |")
+    }
+}
 $Lines.Add("")
 
 $Lines.Add("## Ученики")
@@ -178,10 +186,10 @@ foreach ($Status in $StatusOrder) {
     $Lines.Add("")
     $Lines.Add("### $Status")
     $Lines.Add("")
-    $Lines.Add("| Позывной | Issue | Задание | PR | Обновлено | Сдача |")
-    $Lines.Add("| --- | --- | --- | --- | --- | --- |")
+    $Lines.Add("| Позывной | Issue | Задание | Storage | PR | Обновлено | Сдача |")
+    $Lines.Add("| --- | --- | --- | --- | --- | --- | --- |")
     foreach ($Row in $StatusRows) {
-        $Lines.Add("| ``$(Md $Row.Callsign)`` | $($Row.IssueLink) | $(Md $Row.Title) | $($Row.PrLinks) | $($Row.Updated) | ``$(Md $Row.Submission)`` |")
+        $Lines.Add("| ``$(Md $Row.Callsign)`` | $($Row.IssueLink) | $(Md $Row.Title) | ``storage:$(Md $Row.Storage)`` | $($Row.PrLinks) | $($Row.Updated) | ``$(Md $Row.Submission)`` |")
     }
 }
 $Lines.Add("")
@@ -190,10 +198,10 @@ $ReviewRows = @($Records | Where-Object { $_.Status -eq "ждет-проверк
 $Lines.Add("## Очередь Проверки")
 $Lines.Add("")
 if ($ReviewRows.Count -gt 0) {
-    $Lines.Add("| Позывной | Issue | PR | Обновлено | Что открыть |")
-    $Lines.Add("| --- | --- | --- | --- | --- |")
+    $Lines.Add("| Позывной | Issue | Storage | PR | Обновлено | Что открыть |")
+    $Lines.Add("| --- | --- | --- | --- | --- | --- |")
     foreach ($Row in $ReviewRows) {
-        $Lines.Add("| ``$(Md $Row.Callsign)`` | $($Row.IssueLink) | $($Row.PrLinks) | $($Row.Updated) | ``$(Md $Row.Submission)`` |")
+        $Lines.Add("| ``$(Md $Row.Callsign)`` | $($Row.IssueLink) | ``storage:$(Md $Row.Storage)`` | $($Row.PrLinks) | $($Row.Updated) | ``$(Md $Row.Submission)`` |")
     }
 } else {
     $Lines.Add("_Сейчас нет домашних в статусе ``статус:ждет-проверки 🔍``._")

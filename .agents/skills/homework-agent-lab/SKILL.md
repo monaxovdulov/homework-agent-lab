@@ -32,6 +32,16 @@ identified by public callsigns such as `diogen`.
 submissions/<callsign>/issue-<number>/
 ```
 
+- Every submission needs a public-safe manifest:
+
+```text
+submissions/<callsign>/issue-<number>/submission.md
+```
+
+- Code may live in this lab, a student public repo, a student private repo, an
+  external link, or nowhere for no-code tasks. Use the Issue `storage:*` label as
+  the source of truth.
+
 ## Reliable inbox check
 
 GitHub Issues search and label filters can temporarily show an empty list even

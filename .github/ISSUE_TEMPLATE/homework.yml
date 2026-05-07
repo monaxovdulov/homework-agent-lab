@@ -12,6 +12,7 @@ labels:
   - attempt:required
   - checks:required
   - reflection:required
+  - storage:lab-public
 body:
   - type: input
     id: callsign
@@ -64,6 +65,20 @@ body:
       placeholder: Не добавляйте секреты, личные данные и скрытые ответы.
     validations:
       required: false
+  - type: dropdown
+    id: storage
+    attributes:
+      label: Где хранится код ученика
+      description: GitHub issue form не меняет labels динамически. По умолчанию стоит storage:lab-public; если нужен другой режим, поменяйте label после создания Issue.
+      options:
+        - storage:lab-public
+        - storage:student-public-repo
+        - storage:student-private-repo
+        - storage:external-link
+        - storage:no-code
+      default: 0
+    validations:
+      required: true
   - type: textarea
     id: checks
     attributes:

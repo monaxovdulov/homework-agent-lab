@@ -1,7 +1,7 @@
 # Дашборд домашних заданий
 
 Источник: `monaxovdulov/homework-agent-lab`
-Обновлено: `2026-05-07 17:43 UTC`
+Обновлено: `2026-05-07 17:52 UTC`
 
 Этот файл публичный. В таблицах должны быть только позывные, Issue, PR и
 технические статусы. Не добавляйте реальные имена, контакты или секреты.
@@ -14,6 +14,7 @@
 | Открытых домашних Issue | 2 |
 | Открытых PR | 0 |
 | ждет-ученика 🕯️ | 2 |
+| storage:lab-public | 2 |
 
 ## Ученики
 
@@ -26,10 +27,10 @@
 
 ### ждет-ученика 🕯️
 
-| Позывной | Issue | Задание | PR | Обновлено | Сдача |
-| --- | --- | --- | --- | --- | --- |
-| `sokrat` | [#2](https://github.com/monaxovdulov/homework-agent-lab/issues/2) | RPG-агент: роль, HP и безопасные логи | - | 2026-05-07 | `submissions/sokrat/issue-2/` |
-| `diogen` | [#1](https://github.com/monaxovdulov/homework-agent-lab/issues/1) | Базовый мини-тест по HTTP | - | 2026-05-07 | `submissions/diogen/issue-1/` |
+| Позывной | Issue | Задание | Storage | PR | Обновлено | Сдача |
+| --- | --- | --- | --- | --- | --- | --- |
+| `sokrat` | [#2](https://github.com/monaxovdulov/homework-agent-lab/issues/2) | RPG-агент: роль, HP и безопасные логи | `storage:lab-public` | - | 2026-05-07 | `submissions/sokrat/issue-2/` |
+| `diogen` | [#1](https://github.com/monaxovdulov/homework-agent-lab/issues/1) | Базовый мини-тест по HTTP | `storage:lab-public` | - | 2026-05-07 | `submissions/diogen/issue-1/` |
 
 ## Очередь Проверки
 

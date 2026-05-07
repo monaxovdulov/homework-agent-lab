@@ -14,18 +14,68 @@ submissions/<callsign>/issue-<number>/
 submissions/diogen/issue-12/
 ```
 
-Рекомендуемые файлы:
+Обязательный файл для любой сдачи:
+
+```text
+submission.md
+```
+
+Шаблон:
+
+```text
+submissions/TEMPLATE.md
+```
+
+Рекомендуемые файлы для `storage:lab-public`:
 
 ```text
 solution.py
-reflection.md
+submission.md
 ```
 
 Если домашка не про код:
 
 ```text
 answer.md
-reflection.md
+submission.md
+```
+
+## Где может лежать код
+
+Домашка выбирает один storage mode через label:
+
+- `storage:lab-public` - код лежит прямо в `submissions/<callsign>/issue-<number>/`;
+- `storage:student-public-repo` - код лежит в публичном репозитории ученика, а здесь лежит только `submission.md`;
+- `storage:student-private-repo` - код лежит в приватном репозитории ученика, учитель должен иметь доступ, а здесь лежит только публично безопасный `submission.md`;
+- `storage:external-link` - работа лежит во внешней системе, а здесь лежит безопасная ссылка/описание;
+- `storage:no-code` - сдача без кода, обычно `answer.md` и `submission.md`.
+
+Даже если код хранится не здесь, в `homework-agent-lab` всегда должен быть:
+
+```text
+submissions/<callsign>/issue-<number>/submission.md
+```
+
+Минимальные поля manifest:
+
+```text
+Issue: #12
+Callsign: diogen
+Storage: lab-public
+Checks: ...
+Reflection: ...
+```
+
+Для `storage:student-public-repo` и `storage:external-link` добавьте:
+
+```text
+Submission URL: https://...
+```
+
+Для `storage:student-private-repo` добавьте:
+
+```text
+Access: учитель добавлен как collaborator
 ```
 
 Правила:

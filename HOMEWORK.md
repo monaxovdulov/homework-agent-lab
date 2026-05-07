@@ -25,13 +25,13 @@ powershell -ExecutionPolicy Bypass -File scripts/poll-homework.ps1 -Callsign dio
 
 ## diogen
 
-| Issue | Тема | Статус | Сдача |
-| --- | --- | --- | --- |
-| [#1](https://github.com/monaxovdulov/homework-agent-lab/issues/1) | [homework][diogen] Базовый мини-тест по HTTP | ждет-ученика 🕯️ | `submissions/diogen/issue-1/` |
+| Issue | Тема | Статус | Storage | Сдача |
+| --- | --- | --- | --- | --- |
+| [#1](https://github.com/monaxovdulov/homework-agent-lab/issues/1) | [homework][diogen] Базовый мини-тест по HTTP | ждет-ученика 🕯️ | `storage:lab-public` | `submissions/diogen/issue-1/` |
 
 
 ## sokrat
 
-| Issue | Тема | Статус | Сдача |
-| --- | --- | --- | --- |
-| [#2](https://github.com/monaxovdulov/homework-agent-lab/issues/2) | [homework][sokrat] RPG-агент: роль, HP и безопасные логи | ждет-ученика 🕯️ | `submissions/sokrat/issue-2/` |
+| Issue | Тема | Статус | Storage | Сдача |
+| --- | --- | --- | --- | --- |
+| [#2](https://github.com/monaxovdulov/homework-agent-lab/issues/2) | [homework][sokrat] RPG-агент: роль, HP и безопасные логи | ждет-ученика 🕯️ | `storage:lab-public` | `submissions/sokrat/issue-2/` |

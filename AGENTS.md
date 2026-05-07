@@ -24,7 +24,9 @@
 - Если GitHub Issues или label-фильтры показывают пусто, проверь `HOMEWORK.md`
   и только потом делай вывод, что домашних нет.
 - Для общей картины смотри `DASHBOARD.md` и GitHub Project `Homework Dashboard`.
-- Сдачи учеников должны лежать только в `submissions/<callsign>/issue-<number>/`.
+- Публичный manifest сдачи должен лежать только в
+  `submissions/<callsign>/issue-<number>/submission.md`; код хранится согласно
+  label `storage:*`.
 
 ## Публичность
 
@@ -60,6 +62,11 @@
 - `attempt:required`
 - `checks:required`
 - `reflection:required`
+- `storage:lab-public`
+- `storage:student-public-repo`
+- `storage:student-private-repo`
+- `storage:external-link`
+- `storage:no-code`
 
 Для конкретного ученика:
 
@@ -129,7 +136,8 @@ scripts/create-homework.sh \
   --body "Текст домашки" \
   --pre-code "Что ученик должен сделать до кода" \
   --checks "Как проверить результат" \
-  --reflection "Что ученик должен объяснить в конце"
+  --reflection "Что ученик должен объяснить в конце" \
+  --storage lab-public
 ```
 
 Посмотреть домашки ученика:
@@ -237,7 +245,21 @@ submissions/<callsign>/issue-<number>/
 assignments/issue-<number>/
 ```
 
-Сдача кода должна идти через PR:
+В `homework-agent-lab` всегда должен быть manifest:
+
+```text
+submissions/<callsign>/issue-<number>/submission.md
+```
+
+Код может храниться по-разному, это задает label `storage:*`:
+
+- `storage:lab-public` - код лежит в публичной папке сдачи этого repo;
+- `storage:student-public-repo` - код лежит в публичном repo ученика;
+- `storage:student-private-repo` - код лежит в приватном repo ученика, доступ есть у учителя;
+- `storage:external-link` - работа лежит во внешней системе по безопасной ссылке;
+- `storage:no-code` - сдача без кода.
+
+Сдача в `homework-agent-lab` должна идти через PR:
 
 ```text
 branch: student/<callsign>/issue-<number>

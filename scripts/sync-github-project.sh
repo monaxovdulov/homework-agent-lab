@@ -12,7 +12,7 @@ Required GitHub token scopes:
   gh auth refresh -s read:project -s project
 
 The script adds homework Issues to the owner-level Project and fills text fields:
-Callsign, Homework Status, Tutor Mode, Submission, Pull Request.
+Callsign, Homework Status, Tutor Mode, Storage, Submission, Pull Request.
 USAGE
 }
 
@@ -245,7 +245,7 @@ for item in project_node["items"]["nodes"]:
     if content and content.get("id"):
         items_by_content[content["id"]] = item["id"]
 
-required_fields = ["Callsign", "Homework Status", "Tutor Mode", "Submission", "Pull Request"]
+required_fields = ["Callsign", "Homework Status", "Tutor Mode", "Storage", "Submission", "Pull Request"]
 for field_name in required_fields:
     if field_name in fields:
         continue
@@ -312,6 +312,7 @@ for issue in homework:
     set_text(item_id, "Callsign", callsign)
     set_text(item_id, "Homework Status", label_value(issue, "статус:", "неизвестно"))
     set_text(item_id, "Tutor Mode", label_value(issue, "mode:", "hints-only"))
+    set_text(item_id, "Storage", label_value(issue, "storage:", "lab-public"))
     set_text(item_id, "Submission", submission_path(callsign, issue_number))
     set_text(item_id, "Pull Request", pr_links_for_issue(issue_number))
 

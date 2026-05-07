@@ -3,6 +3,7 @@
 Позывной:
 
 Issue:
+Storage:
 
 ## Что сделал
 
@@ -22,9 +23,16 @@ Issue:
 submissions/<callsign>/issue-<number>/
 ```
 
+Manifest:
+
+```text
+submissions/<callsign>/issue-<number>/submission.md
+```
+
 ## Checklist
 
 - [ ] Я работал только в папке своего позывного.
+- [ ] Я добавил `submission.md` с `Issue`, `Callsign`, `Storage`, `Checks`, `Reflection`.
 - [ ] Я указал `Refs #...`, а не `Closes #...`.
 - [ ] Я не добавил секреты, токены, пароли или личные данные.
 - [ ] Я написал короткую рефлексию.
