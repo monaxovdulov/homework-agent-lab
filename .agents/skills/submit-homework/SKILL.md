@@ -1,6 +1,6 @@
 ---
 name: submit-homework
-description: Use when a student Codex tutor needs to submit homework in monaxovdulov/homework-agent-lab: prepare submissions/<callsign>/issue-<number>/, verify public-safety checks, create a PR, comment on the Issue, and move it to teacher review without closing it.
+description: "Use when a student Codex tutor needs to submit homework in monaxovdulov/homework-agent-lab: prepare submissions/<callsign>/issue-<number>/, verify public-safety checks, create a PR, comment on the Issue, and move it to teacher review without closing it."
 ---
 
 # submit-homework

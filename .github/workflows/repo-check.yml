@@ -1,0 +1,40 @@
+name: Проверка репозитория
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate repository config
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Bash scripts
+        run: bash -n scripts/*.sh .agents/skills/*/scripts/*.sh
+
+      - name: Validate skill frontmatter
+        run: scripts/validate-skills.sh
+
+      - name: Validate YAML files
+        run: |
+          python3 - <<'PY'
+          import sys
+          import yaml
+          for path in [
+              ".github/ISSUE_TEMPLATE/homework.yml",
+              ".github/ISSUE_TEMPLATE/question.yml",
+              ".github/workflows/dashboard-refresh.yml",
+              ".github/workflows/repo-check.yml",
+              ".github/workflows/submission-check.yml",
+          ]:
+              yaml.safe_load(open(path, encoding="utf-8"))
+              print(f"OK {path}")
+          PY
