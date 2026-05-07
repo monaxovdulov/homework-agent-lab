@@ -1,7 +1,7 @@
 # Дашборд домашних заданий
 
 Источник: `monaxovdulov/homework-agent-lab`
-Обновлено: `2026-05-07 17:30 UTC`
+Обновлено: `2026-05-07 17:43 UTC`
 
 Этот файл публичный. В таблицах должны быть только позывные, Issue, PR и
 технические статусы. Не добавляйте реальные имена, контакты или секреты.
@@ -29,7 +29,7 @@
 | Позывной | Issue | Задание | PR | Обновлено | Сдача |
 | --- | --- | --- | --- | --- | --- |
 | `sokrat` | [#2](https://github.com/monaxovdulov/homework-agent-lab/issues/2) | RPG-агент: роль, HP и безопасные логи | - | 2026-05-07 | `submissions/sokrat/issue-2/` |
-| `diogen` | [#1](https://github.com/monaxovdulov/homework-agent-lab/issues/1) | Базовый мини-тест по HTTP | - | 2026-04-27 | `submissions/diogen/issue-1/` |
+| `diogen` | [#1](https://github.com/monaxovdulov/homework-agent-lab/issues/1) | Базовый мини-тест по HTTP | - | 2026-05-07 | `submissions/diogen/issue-1/` |
 
 ## Очередь Проверки
 
